@@ -17,8 +17,11 @@ public class mining {
 	public static void main(String args[]) throws IOException{
 		
 		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/transactionDB.txt");
-		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/madhu.txt", "UTF-8");
-		PrintWriter writer1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/output.txt", "UTF-8");
+		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt", "UTF-8");
+		PrintWriter writer1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/UniqueItemSet.txt", "UTF-8");
+		File newFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/transactionDB.txt");
+		Scanner newinput = new Scanner(newFile);
+		newinput.useDelimiter(System.getProperty("line.separator")); 
 		int counter = 0;
 		int k = 8;
 		int p=0;
@@ -26,6 +29,8 @@ public class mining {
 		Set<String> s = new HashSet<>();
 		StringBuffer buffer = new StringBuffer();
 		Map<String,String> itemSetMap = new HashMap<>();
+		List<String> transacDB = new ArrayList<String>();
+		List<String> modifiedList = new ArrayList<String>();
 	        
 		while(input.hasNext()){
 			    	String line = input.next();
@@ -36,8 +41,10 @@ public class mining {
 			        while (tokens.hasMoreTokens()){
 			           String temp = tokens.nextToken();
 			           s.add(temp);
+			           transacDB.add(temp);
 			         }
 		}
+		input.close();
 		
         List<String> itemSet = new ArrayList<>();
         Map<Integer,List<String>> subset = new HashMap<>();
@@ -52,15 +59,38 @@ public class mining {
         //Generating key value pairs - Key - Binary Numbers - Value - UniqueItemSets
       
         while(p<itemSet.size()){
+        	writer1.append(Integer.toBinaryString(p));
+        	writer1.append("=");
+        	writer1.append(itemSet.get(p));
+        	writer1.append("\n");
         	itemSetMap.put(Integer.toBinaryString(p), itemSet.get(p));
 			p++;
 		}
         
-        System.out.println(itemSetMap.entrySet());
+        //Replacing the Contents of TransactionDB with Binary Numbers Equivalent in ITEMSETMAP.
         
-        for(String sun : itemSet){
-        	 writer1.append(sun+ " ,"+ "\n");
+        while(newinput.hasNext()){
+    	String line = newinput.nextLine();
+    	String amy  = line.replaceAll("\\s+",",");
+    	StringTokenizer tokenizer = new  StringTokenizer(amy,",");
+    	while(tokenizer.hasMoreTokens()){
+    		String trans = tokenizer.nextToken(",");
+    		if(itemSetMap.containsValue(trans)){
+    			Set<String> keys = itemSetMap.keySet();
+    			for(String key : keys){
+    				String oldTransactionDB = itemSetMap.get(key);
+    				if(trans.equalsIgnoreCase(oldTransactionDB)){
+    					String replacedString = trans.replace(trans, key);
+    			        synchronized (writer) {
+	    					writer.append(replacedString);
+	    					writer.append("  ");
+    			        }
+    				}
+    			}
+    		}
+    	}	writer.append("\n");
         }
+
         s.clear();
    
         
@@ -77,6 +107,8 @@ public class mining {
                 buffer.delete(0, buffer.length());
                 i = i+1;
                 k = k+1;
-        	   	}
+        	 
+        }
+        writer.close();
         	}
         }
