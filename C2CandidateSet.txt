@@ -19,6 +19,7 @@ public class C2CandidateSet {
 		Scanner candidateScan = new Scanner(file);
 		Scanner transactionScan = new Scanner(transactionFile);
 		StringBuffer buffer = new StringBuffer();
+		StringBuffer finalItemSet = new StringBuffer();
 		int i = 0;
 		int validator = 2;
 		transactionScan.useDelimiter(System.getProperty("line.separator")); 
@@ -39,6 +40,8 @@ public class C2CandidateSet {
 		
 		while(transactionScan.hasNext()){
 					
+			String papaya = transactionScan.nextLine().trim();
+
 					String s = buffer.toString();
 					List<String> itemSet = new ArrayList<>();
 					
@@ -50,7 +53,7 @@ public class C2CandidateSet {
 							String elements = tokenizer.nextToken();
 							itemSet.add(elements);
 						}
-						String papaya = transactionScan.nextLine().trim();
+						
 						if(papaya.contains(" ")){
 							papaya = papaya.replaceAll("\\s+",",");
 							StringTokenizer tokenizers = new StringTokenizer(papaya,",");
@@ -59,28 +62,34 @@ public class C2CandidateSet {
 								String elements = tokenizers.nextToken();
 								tempList.add(elements);
 							}
+							List<String> dummyitemSet = itemSet;
 							
-							if(tempList.size() >= itemSet.size()){
-								int itemSize = itemSet.size();
-								if(itemSet.retainAll(tempList)){
-									if(itemSize == itemSet.size()){
+							if(tempList.size() >= dummyitemSet.size()){
+								int dummyitemSize = dummyitemSet.size();
+								if(dummyitemSet.retainAll(tempList)){
+									if(dummyitemSize == dummyitemSet.size()){
 										frequencycounter =+ 1;
+										for(String finalItems : tempList){
+											System.out.println(" appending values " + finalItems );
+											finalItemSet.append(tempList);
+											finalItemSet.append(",");
+										}
+										finalItemSet.append("|||");
+										finalItemSet.append("\n");
+										tempList.clear();
 									}
-									tempList.clear();
 								}
-								System.out.println(frequencycounter);
 							}else{
 								tempList.clear();
 							}
 						}
-					 s = s.substring(delimeterindex+1, s.length());
+					 s = s.substring(delimeterindex+2, s.length());
 					 if(s.indexOf("||") != -1){
 						 continue;
 					 }
 					}
-					
-					
-				
 					}
+		transactionScan.close();
+		System.out.println(finalItemSet.toString());
 	}
 }
