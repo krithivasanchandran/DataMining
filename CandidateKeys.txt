@@ -1,0 +1,115 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
+
+public class CandidateKeys {
+
+	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+
+		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets1.txt");
+		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt", "UTF-8");
+		Scanner scan = new Scanner(file);
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the number of sets to be formed");
+		int k =0;
+		int minimumSupportCount = 0;
+		List<String> binaryItems = new ArrayList<>();
+		StringBuffer buffer = new StringBuffer();
+		int i=0;
+		Map<String,Integer> F1 = new HashMap<String,Integer>();
+		
+		reboot:
+		while(scanner.hasNext()){
+			k = scanner.nextInt();
+			if(k<2){
+				System.out.println("Please enter a valid set number");
+				continue reboot;
+			}
+			System.out.println("Please enter the minimum support count");
+			minimumSupportCount = scanner.nextInt();
+			break;
+		}
+		scanner.close();
+		System.out.println(k + " ---> " + minimumSupportCount);
+		
+		while(scan.hasNext()){
+
+			String getString = scan.nextLine().trim();
+	        int getDelimeterIndex = getString.indexOf(":");
+		        if(getDelimeterIndex != -1){
+			        String uniqueItemString = getString.substring(0, getDelimeterIndex);
+			        int count = Integer.parseInt(getString.substring(getDelimeterIndex+1, getString.length()).trim());
+			        if(count >= minimumSupportCount){
+			        	F1.put(uniqueItemString, count);
+			        }
+			       }
+	        //binaryItems.add(uniqueItemString);
+		}
+		scan.close();
+
+		Set<String> keys = F1.keySet();
+		System.out.println(keys + "\n");
+		String[] items = keys.toArray(new String[keys.size()]);
+		
+		// Creating a set of two {a,b} 
+		if(k>1){
+
+			int m=0;
+			
+			while(m<items.length){
+				
+				String set = items[m];
+				
+				for(int p=m+1;p<items.length; p++){
+
+					String temp = items[p];
+					writer.append(temp);
+					writer.append(",");
+					writer.append(set);
+					writer.append("\n");
+				  }
+				m++;
+			}
+		}
+		C2CandidateSet c2 = new C2CandidateSet();
+		c2.generateCandidateSet(2);
+		
+		//Creating a set of three {a,b,c}
+		
+		if(k>2){
+
+			int m=0;
+			
+			while(m<items.length){
+				
+				String set = items[m];
+				
+				for(int p=m+1;p<items.length && (p+1) < items.length; p++){
+					
+
+					String temp = items[p];
+					String temp2= items[p+1];
+					writer.append(temp);
+					writer.append(",");
+					writer.append(temp2);
+					writer.append(",");
+					writer.append(set);
+					writer.append("\n");
+				  }
+				m++;
+			}
+		}
+		c2.generateCandidateSet(3);
+		System.out.println(" Creation of 3 item sets ");
+		
+	}
+
+}
