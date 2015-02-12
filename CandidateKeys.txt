@@ -4,10 +4,12 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 
 public class CandidateKeys {
@@ -16,6 +18,7 @@ public class CandidateKeys {
 
 		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets1.txt");
 		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt", "UTF-8");
+		PrintWriter ItemWriter = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/finalitems.txt", "UTF-8");
 		Scanner scan = new Scanner(file);
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the number of sets to be formed");
@@ -76,39 +79,60 @@ public class CandidateKeys {
 					writer.append(set);
 					writer.append("\n");
 				  }
+				writer.flush();
 				m++;
 			}
 		}
 		C2CandidateSet c2 = new C2CandidateSet();
-		c2.generateCandidateSet(2);
+		StringBuffer finalBuffer = c2.generateCandidateSet(2);
+		ItemWriter.append(finalBuffer.toString());
+		LinkedList<String> firstElement = new LinkedList<>();
+		int counter = 0;
+		
+		String recursiveValidator = finalBuffer.toString();
+		for(;recursiveValidator.indexOf("--")!=-1;){
+			int delemiter = recursiveValidator.indexOf("--");
+			String parentString = recursiveValidator.substring(0, delemiter).trim();
+			
+			recursiveValidator = recursiveValidator.substring(delemiter+2, recursiveValidator.length());
+			
+					int subdelimeter = recursiveValidator.indexOf("--");
+					if(parentString.regionMatches(0, recursiveValidator, 0, subdelimeter)){
+						System.out.println(recursiveValidator.substring(0, subdelimeter) + "(" + counter + ")");
+						counter = counter + 1;
+					}
+		}
+		
+		
 		
 		//Creating a set of three {a,b,c}
 		
-		if(k>2){
-
-			int m=0;
-			
-			while(m<items.length){
-				
-				String set = items[m];
-				
-				for(int p=m+1;p<items.length && (p+1) < items.length; p++){
-					
-
-					String temp = items[p];
-					String temp2= items[p+1];
-					writer.append(temp);
-					writer.append(",");
-					writer.append(temp2);
-					writer.append(",");
-					writer.append(set);
-					writer.append("\n");
-				  }
-				m++;
-			}
-		}
-		c2.generateCandidateSet(3);
-		System.out.println(" Creation of 3 item sets ");
+//		if(k>2){
+//
+//			int m=0;
+//			
+//			while(m<items.length){
+//				
+//				String set = items[m];
+//				
+//				for(int p=m+1;p<items.length && (p+1) < items.length; p++){
+//					
+//
+//					String temp = items[p];
+//					String temp2= items[p+1];
+//					writer.append(temp);
+//					writer.append(",");
+//					writer.append(temp2);
+//					writer.append(",");
+//					writer.append(set);
+//					writer.append("\n");
+//				  }
+//				m++;
+//			}
+//		}
+		
+//		c2.generateCandidateSet(3);
+//		System.out.println(" Creation of 3 item sets ");
 		
 	}
 
