@@ -23,6 +23,7 @@ public class CandidateKeys {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the number of sets to be formed");
 		int k =0;
+		String[] oneSetReducerKeys = null; 
 		int minimumSupportCount = 0;
 		List<String> binaryItems = new ArrayList<>();
 		StringBuffer buffer = new StringBuffer();
@@ -66,10 +67,12 @@ public class CandidateKeys {
 		if(k>1){
 
 			int m=0;
-			
+			int setCounter = 0;
+			oneSetReducerKeys = new String[items.length];
 			while(m<items.length){
 				
 				String set = items[m];
+				oneSetReducerKeys[setCounter] = set;
 				
 				for(int p=m+1;p<items.length; p++){
 
@@ -81,58 +84,36 @@ public class CandidateKeys {
 				  }
 				writer.flush();
 				m++;
+				setCounter++;
 			}
 		}
 		C2CandidateSet c2 = new C2CandidateSet();
-		StringBuffer finalBuffer = c2.generateCandidateSet(2);
+		StringBuffer finalBuffer = c2.generateCandidateSet(2,oneSetReducerKeys);
 		ItemWriter.append(finalBuffer.toString());
-		LinkedList<String> firstElement = new LinkedList<>();
 		int counter = 0;
 		
 		String recursiveValidator = finalBuffer.toString();
 		for(;recursiveValidator.indexOf("--")!=-1;){
 			int delemiter = recursiveValidator.indexOf("--");
 			String parentString = recursiveValidator.substring(0, delemiter).trim();
+			String superString = recursiveValidator.substring(delemiter+2, recursiveValidator.length());
 			
+			for(;superString.indexOf("--") != -1;){
+				int subdelimeter = superString.indexOf("--");
+				String subString = superString.substring(0, subdelimeter);
+				
+				if(parentString.regionMatches(0, subString, 0, subdelimeter)){
+					System.out.println(recursiveValidator.substring(0, subdelimeter) + "(" + counter + ")");
+					counter = counter + 1;
+				}
+				superString = superString.substring(subdelimeter+2, superString.length());
+			}
 			recursiveValidator = recursiveValidator.substring(delemiter+2, recursiveValidator.length());
-			
-					int subdelimeter = recursiveValidator.indexOf("--");
-					if(parentString.regionMatches(0, recursiveValidator, 0, subdelimeter)){
-						System.out.println(recursiveValidator.substring(0, subdelimeter) + "(" + counter + ")");
-						counter = counter + 1;
-					}
 		}
 		
 		
 		
-		//Creating a set of three {a,b,c}
-		
-//		if(k>2){
-//
-//			int m=0;
-//			
-//			while(m<items.length){
-//				
-//				String set = items[m];
-//				
-//				for(int p=m+1;p<items.length && (p+1) < items.length; p++){
-//					
-//
-//					String temp = items[p];
-//					String temp2= items[p+1];
-//					writer.append(temp);
-//					writer.append(",");
-//					writer.append(temp2);
-//					writer.append(",");
-//					writer.append(set);
-//					writer.append("\n");
-//				  }
-//				m++;
-//			}
-//		}
-		
-//		c2.generateCandidateSet(3);
-//		System.out.println(" Creation of 3 item sets ");
+
 		
 	}
 
