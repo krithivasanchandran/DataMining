@@ -1,0 +1,94 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+
+public class newC2Candidates {
+
+	public static void main(String[] args) throws IOException {
+		
+		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt");
+		File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
+		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a.txt", "UTF-8");
+		Map<Integer,List<Integer>> setMap = new HashMap<>();
+		
+		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
+			int i=0;
+		    for(String line; (line = br.readLine()) != null; ) {
+		        String binaryString = line.trim();
+		        String[] binarySplitter = (binaryString.trim()).split(",");
+		        
+		        List<Integer> binaryList = new ArrayList<>();
+				for(String b: binarySplitter){
+					int c = Integer.valueOf(b.trim(),2);
+					binaryList.add(c);
+				}
+				setMap.put(i, binaryList);
+				i++;
+		    }
+		    br.close();
+		}catch(Exception e){
+			System.out.println(" Exception ========> " + e.getMessage());
+		}
+		
+		try(BufferedReader b = new BufferedReader(new FileReader(transactionFile))) {
+		    for(String line; (line = b.readLine()) != null; ) {
+		    	String transactionDB = line.trim();
+		    	
+		    	if(transactionDB.contains(" ")){
+		    		transactionDB = transactionDB.replaceAll("\\s+",",");
+					String[] transaction = transactionDB.split(",");
+					List<Integer> transactionList = new ArrayList<>();
+					for(String s:transaction){
+						int a = Integer.valueOf(s.trim(),2);
+						transactionList.add(a);
+					}
+					if(!setMap.isEmpty() && !transactionList.isEmpty()){
+					
+						Set<Integer> key = setMap.keySet();
+						for(int keySet : key){
+							List<Integer> binary = setMap.get(keySet);
+							
+							if(!binary.isEmpty()){
+								List<Integer> dummytempList = new ArrayList<>();
+								for(int copy: binary){
+									dummytempList.add(copy);
+								}
+								
+								if( !(dummytempList.retainAll(transactionList)) && !(dummytempList.isEmpty())){
+									
+									
+									int dummysize = dummytempList.size();
+									int itemsize = binary.size();
+									
+									if(dummysize == itemsize){
+										
+										for(int appenders : transactionList){
+											writer.append(Integer.toBinaryString(appenders));
+											writer.append(" ");
+										}
+										writer.append("\n");
+									}
+							}
+							}else{
+								System.out.println(" Critical the Set which is to be compared is empty");
+							}
+						}
+					}else{
+						System.out.println("Critical the Map is empty !!!!!!!!!!!!!!!!");
+					}
+		    	}
+		    }
+		    // line is not visible here.
+		}catch(Exception e){
+				System.out.println(" Exception ========> " + e.getMessage());
+			}
+		}
+	}
