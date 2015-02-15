@@ -10,27 +10,56 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class newC2Candidates {
+public class newC2Candidates extends Thread {
 
-	public static void main(String[] args) throws IOException {
+	public void generateCandidateSet(final int min_support_count) throws IOException, InterruptedException {
 		
 		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt");
-		File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
-		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a.txt", "UTF-8");
-		Map<Integer,List<Integer>> setMap = new HashMap<>();
+		final File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
+		final PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a.txt", "UTF-8");
+		final PrintWriter writer1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a1.txt", "UTF-8");
+		final PrintWriter writer2 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a2.txt", "UTF-8");
+		final PrintWriter writer3 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a3.txt", "UTF-8");
+		final PrintWriter writer4 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a4.txt", "UTF-8");
+		final Map<Integer,List<Integer>> setMap = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap1 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap2 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap3 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap4 = new HashMap<>();
+		int caseselector = 0;
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 			int i=0;
+			int mapThresholdValue=50000;
+			System.out.println(" mapThresholdValue ===============> " + mapThresholdValue);
 		    for(String line; (line = br.readLine()) != null; ) {
 		        String binaryString = line.trim();
+		        System.out.println(" binaryString ========> " + binaryString);
 		        String[] binarySplitter = (binaryString.trim()).split(",");
 		        
 		        List<Integer> binaryList = new ArrayList<>();
 				for(String b: binarySplitter){
-					int c = Integer.valueOf(b.trim(),2);
+					int c = Integer.parseInt(b);
 					binaryList.add(c);
 				}
-				setMap.put(i, binaryList);
+				
+				if(i<mapThresholdValue){
+					setMap.put(i, binaryList);
+					caseselector = 1;
+				}else if(i>mapThresholdValue && i<(mapThresholdValue*4)){
+					setMap1.put(i, binaryList);
+					caseselector = 12;
+				}else if(i>(mapThresholdValue*4) && i<(mapThresholdValue*8)){
+					setMap2.put(i, binaryList);
+					caseselector = 123;
+				}else if(i>(mapThresholdValue*8) && i<(mapThresholdValue*16)){
+					setMap3.put(i, binaryList);
+					caseselector = 1234;
+				}
+				else{
+					setMap4.put(i, binaryList);
+					caseselector = 12345;
+				}
 				i++;
 		    }
 		    br.close();
@@ -38,57 +67,178 @@ public class newC2Candidates {
 			System.out.println(" Exception ========> " + e.getMessage());
 		}
 		
-		try(BufferedReader b = new BufferedReader(new FileReader(transactionFile))) {
-		    for(String line; (line = b.readLine()) != null; ) {
-		    	String transactionDB = line.trim();
-		    	
-		    	if(transactionDB.contains(" ")){
-		    		transactionDB = transactionDB.replaceAll("\\s+",",");
-					String[] transaction = transactionDB.split(",");
-					List<Integer> transactionList = new ArrayList<>();
-					for(String s:transaction){
-						int a = Integer.valueOf(s.trim(),2);
-						transactionList.add(a);
-					}
-					if(!setMap.isEmpty() && !transactionList.isEmpty()){
-					
-						Set<Integer> key = setMap.keySet();
-						for(int keySet : key){
-							List<Integer> binary = setMap.get(keySet);
-							
-							if(!binary.isEmpty()){
-								List<Integer> dummytempList = new ArrayList<>();
-								for(int copy: binary){
-									dummytempList.add(copy);
-								}
-								
-								if( !(dummytempList.retainAll(transactionList)) && !(dummytempList.isEmpty())){
-									
-									
-									int dummysize = dummytempList.size();
-									int itemsize = binary.size();
-									
-									if(dummysize == itemsize){
-										
-										for(int appenders : transactionList){
-											writer.append(Integer.toBinaryString(appenders));
-											writer.append(" ");
-										}
-										writer.append("\n");
-									}
-							}
-							}else{
-								System.out.println(" Critical the Set which is to be compared is empty");
-							}
-						}
-					}else{
-						System.out.println("Critical the Map is empty !!!!!!!!!!!!!!!!");
-					}
-		    	}
-		    }
-		    // line is not visible here.
-		}catch(Exception e){
-				System.out.println(" Exception ========> " + e.getMessage());
-			}
+		switch(caseselector){
+		case 1:
+			Thread t1 = new Thread("Thread 1================================>"){
+				public void run(){
+					newC2Candidates n1 = new newC2Candidates();
+					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+				}};
+			t1.start();
+			break;
+		
+		case 12: 
+				Thread t12 = new Thread("Thread 1================================>"){
+				public void run(){
+					newC2Candidates n1 = new newC2Candidates();
+					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+				}};
+				
+				Thread t2 = new Thread("Thread 2================================>"){
+					public void run(){
+						newC2Candidates n2 = new newC2Candidates();
+						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
+					}};
+			t12.start();
+			t2.start();
+			break;
+			
+		case 123:
+				Thread t123 = new Thread("Thread 1================================>"){
+				public void run(){
+					newC2Candidates n1 = new newC2Candidates();
+					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+				}};
+				
+				Thread t223 = new Thread("Thread 2================================>"){
+					public void run(){
+						newC2Candidates n2 = new newC2Candidates();
+						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
+					}};
+				Thread t3 = new Thread("Thread 3================================>"){
+				public void run(){
+					newC2Candidates n3 = new newC2Candidates();
+					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
+				}};
+				t123.start();
+				t223.start();
+				t3.start();
+				break;
+
+		
+		case 1234:
+				Thread t1234 = new Thread("Thread 1================================>"){
+				public void run(){
+					newC2Candidates n1 = new newC2Candidates();
+					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+				}};
+				
+				Thread t2234 = new Thread("Thread 2================================>"){
+					public void run(){
+						newC2Candidates n2 = new newC2Candidates();
+						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
+					}};
+				Thread t34 = new Thread("Thread 3================================>"){
+				public void run(){
+					newC2Candidates n3 = new newC2Candidates();
+					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
+				}};
+				
+				Thread t4 = new Thread("Thread 4================================>"){
+				public void run(){
+					newC2Candidates n4 = new newC2Candidates();
+					n4.initiateComparator(setMap3,writer3,transactionFile,min_support_count);
+				}
+			};
+			t1234.start();
+			t2234.start();
+			t34.start();
+			t4.start();
+			break;
+
+		
+		case 12345:
+				Thread t12345 = new Thread("Thread 1================================>"){
+				public void run(){
+					newC2Candidates n1 = new newC2Candidates();
+					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+				}};
+				
+				Thread t22345 = new Thread("Thread 2================================>"){
+					public void run(){
+						newC2Candidates n2 = new newC2Candidates();
+						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
+					}};
+				Thread t345 = new Thread("Thread 3================================>"){
+				public void run(){
+					newC2Candidates n3 = new newC2Candidates();
+					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
+				}};
+				
+				Thread t45 = new Thread("Thread 4================================>"){
+				public void run(){
+					newC2Candidates n4 = new newC2Candidates();
+					n4.initiateComparator(setMap3,writer3,transactionFile,min_support_count);
+				}
+			};
+			Thread t5 = new Thread("Thread 5================================>"){
+				public void run(){
+					newC2Candidates n5= new newC2Candidates();
+					n5.initiateComparator(setMap3,writer4,transactionFile,min_support_count);
+				}};
+				 t12345.start();
+				 t22345.start();
+				 t345.start();
+				 t45.start();
+				 t5.start();
+			break;
+			
+		default:
+			System.out.println(" FATAL NONE OF THE SWITCH CASE GOT EXECUTED");
+			break;}
 		}
+		
+		
+		
+	public synchronized void initiateComparator(Map<Integer,List<Integer>> setsMap,PrintWriter writer,File transactionFile,int min_support_count){
+		System.out.println(" Thread Name --------===============================>" + Thread.currentThread().getName());
+		Set<Integer> key = setsMap.keySet();
+		for(int keySet : key){
+			List<Integer> binary = setsMap.get(keySet);
+			int counter = 0;
+			if(binary.isEmpty()){
+				System.out.println(" Critical the Set which is to be compared is empty");
+			}else{
+				
+				try(BufferedReader b = new BufferedReader(new FileReader(transactionFile))) {
+				    for(String line; (line = b.readLine()) != null; ) {
+				    	String transactionDB = line.trim();
+				    	
+				    	if(transactionDB.contains(" ")){
+				    		transactionDB = transactionDB.replaceAll("\\s+",",");
+							String[] transaction = transactionDB.split(",");
+							List<Integer> transactionList = new ArrayList<>();
+							for(String s:transaction){
+								int a = Integer.parseInt(s);
+								transactionList.add(a);
+							}
+							
+							List<Integer> dummytempList = new ArrayList<>();
+							for(int copy: binary){
+								dummytempList.add(copy);
+							}
+							
+							if( !(dummytempList.retainAll(transactionList)) && !(dummytempList.isEmpty())){
+											
+											int dummysize = dummytempList.size();
+											int itemsize = binary.size();
+											
+											if(dummysize == itemsize){
+												counter++;
+											}
+									}
+									}
+								}
+							}catch(Exception e){
+								System.out.println(" Exception ========> " + e.getMessage());
+							}
+				System.out.println(binary.get(0)+","+binary.get(1) + "--------------->" + counter);
+
+				if(counter >=min_support_count){
+					writer.append(binary.get(0)+","+binary.get(1)+ "("+counter+")");
+				}
+					}
+			
+	   }
+	}
 	}
