@@ -1,8 +1,12 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,29 +16,43 @@ import java.util.Set;
 
 public class newC2Candidates extends Thread {
 
-	public void generateCandidateSet(final int min_support_count) throws IOException, InterruptedException {
+	public  List<String> generateCandidateSet(final int min_support_count,int totalFileSize) throws IOException, InterruptedException {
 		
 		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt");
-		final File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
-		final PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a.txt", "UTF-8");
-		final PrintWriter writer1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a1.txt", "UTF-8");
-		final PrintWriter writer2 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a2.txt", "UTF-8");
-		final PrintWriter writer3 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a3.txt", "UTF-8");
-		final PrintWriter writer4 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/a4.txt", "UTF-8");
+	    File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
+		final List<String> finalMapRecursiveList = new ArrayList<>();
+		List<String> finalMapRecursiveListduplicateList = new ArrayList<>();
+			
+		final StringBuffer buffer1 = new StringBuffer();
+		final StringBuffer buffer2 = new StringBuffer();
+		final StringBuffer buffer3 = new StringBuffer();
+		final StringBuffer buffer4 = new StringBuffer();
+		final StringBuffer buffer5 = new StringBuffer();
+		final StringBuffer buffer6 = new StringBuffer();
+		final StringBuffer buffer7 = new StringBuffer();
+		final StringBuffer buffer8 = new StringBuffer();
+		final StringBuffer buffer9 = new StringBuffer();
+		final StringBuffer buffer10 = new StringBuffer();
+		
 		final Map<Integer,List<Integer>> setMap = new HashMap<>();
 		final Map<Integer,List<Integer>> setMap1 = new HashMap<>();
 		final Map<Integer,List<Integer>> setMap2 = new HashMap<>();
 		final Map<Integer,List<Integer>> setMap3 = new HashMap<>();
 		final Map<Integer,List<Integer>> setMap4 = new HashMap<>();
-		int caseselector = 0;
+		final Map<Integer,List<Integer>> setMap5 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap6 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap7 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap8 = new HashMap<>();
+		final Map<Integer,List<Integer>> setMap9 = new HashMap<>();
+		final Map<Integer,List<Integer>> transactionDBMap = new HashMap<>();
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 			int i=0;
-			int mapThresholdValue=50000;
-			System.out.println(" mapThresholdValue ===============> " + mapThresholdValue);
+			int mapThresholdValue=totalFileSize/10;
+			System.out.println(" ===============> "+ mapThresholdValue);
+		
 		    for(String line; (line = br.readLine()) != null; ) {
 		        String binaryString = line.trim();
-		        System.out.println(" binaryString ========> " + binaryString);
 		        String[] binarySplitter = (binaryString.trim()).split(",");
 		        
 		        List<Integer> binaryList = new ArrayList<>();
@@ -45,20 +63,24 @@ public class newC2Candidates extends Thread {
 				
 				if(i<mapThresholdValue){
 					setMap.put(i, binaryList);
-					caseselector = 1;
-				}else if(i>mapThresholdValue && i<(mapThresholdValue*4)){
+				}else if(i>mapThresholdValue && i<(mapThresholdValue*2)){
 					setMap1.put(i, binaryList);
-					caseselector = 12;
-				}else if(i>(mapThresholdValue*4) && i<(mapThresholdValue*8)){
+				}else if(i>(mapThresholdValue*2) && i<(mapThresholdValue*3)){
 					setMap2.put(i, binaryList);
-					caseselector = 123;
-				}else if(i>(mapThresholdValue*8) && i<(mapThresholdValue*16)){
+				}else if(i>(mapThresholdValue*3) && i<(mapThresholdValue*4)){
 					setMap3.put(i, binaryList);
-					caseselector = 1234;
-				}
-				else{
+				}else if(i>(mapThresholdValue*4) && i<(mapThresholdValue*5)){
 					setMap4.put(i, binaryList);
-					caseselector = 12345;
+				}else if(i>(mapThresholdValue*5) && i<(mapThresholdValue*6)){
+					setMap5.put(i, binaryList);
+				}else if(i>(mapThresholdValue*6) && i<(mapThresholdValue*7)){
+					setMap6.put(i, binaryList);
+				}else if(i>(mapThresholdValue*7) && i<(mapThresholdValue*8)){
+					setMap7.put(i, binaryList);
+				}else if(i>(mapThresholdValue*8) && i<(mapThresholdValue*9)){
+					setMap8.put(i, binaryList);
+				}else{
+					setMap9.put(i, binaryList);
 				}
 				i++;
 		    }
@@ -67,178 +89,249 @@ public class newC2Candidates extends Thread {
 			System.out.println(" Exception ========> " + e.getMessage());
 		}
 		
-		switch(caseselector){
-		case 1:
+		try(BufferedReader b = new BufferedReader(new FileReader(transactionFile))) {
+			int mapCounter = 0;
+		    for(String line; (line = b.readLine()) != null; ) {
+		    	String transactionDB = line.trim();
+		    	if(transactionDB.contains(" ")){
+		    		transactionDB = transactionDB.replaceAll("\\s+",",");
+					String[] transaction = transactionDB.split(",");
+					List<Integer> transactionList = new ArrayList<>();
+					for(String s:transaction){
+						int a = Integer.parseInt(s.trim());
+						transactionList.add(a);
+					}
+					transactionDBMap.put(mapCounter, transactionList);
+					mapCounter++;
+		    }
+		    }
+		    b.close();
+		    }catch(Exception e){
+				System.out.println(" Exception ========> " + e.getMessage());
+			}
+
 			Thread t1 = new Thread("Thread 1================================>"){
 				public void run(){
-					newC2Candidates n1 = new newC2Candidates();
-					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
-				}};
-			t1.start();
-			break;
-		
-		case 12: 
-				Thread t12 = new Thread("Thread 1================================>"){
-				public void run(){
-					newC2Candidates n1 = new newC2Candidates();
-					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
+					
+					try {
+						newC2Candidates n1 = new newC2Candidates();
+						PrintWriter bw = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet.txt", "UTF-8");
+						String a = n1.initiateComparator(setMap,buffer1,min_support_count,transactionDBMap);
+						if(a.length() > 0){
+							bw.append(a);
+							finalMapRecursiveList.add(a);
+						}
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					
+					
 				}};
 				
-				Thread t2 = new Thread("Thread 2================================>"){
-					public void run(){
-						newC2Candidates n2 = new newC2Candidates();
-						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
-					}};
-			t12.start();
-			t2.start();
-			break;
+			Thread t2 = new Thread("Thread 2================================>"){
+				public void run(){
+					try{
+					newC2Candidates n2 = new newC2Candidates();
+					PrintWriter bw1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet1.txt", "UTF-8");
+					String b = n2.initiateComparator(setMap1,buffer2,min_support_count,transactionDBMap);
+					if(b.length() > 0){
+						bw1.append(b);
+						finalMapRecursiveList.add(b);
+					}
+					}catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}};
 			
-		case 123:
-				Thread t123 = new Thread("Thread 1================================>"){
-				public void run(){
-					newC2Candidates n1 = new newC2Candidates();
-					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
-				}};
-				
-				Thread t223 = new Thread("Thread 2================================>"){
-					public void run(){
-						newC2Candidates n2 = new newC2Candidates();
-						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
-					}};
-				Thread t3 = new Thread("Thread 3================================>"){
-				public void run(){
+			Thread t3 = new Thread("Thread 3================================>"){
+			public void run(){
+				try{
 					newC2Candidates n3 = new newC2Candidates();
-					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
-				}};
-				t123.start();
-				t223.start();
-				t3.start();
-				break;
-
-		
-		case 1234:
-				Thread t1234 = new Thread("Thread 1================================>"){
-				public void run(){
-					newC2Candidates n1 = new newC2Candidates();
-					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
-				}};
-				
-				Thread t2234 = new Thread("Thread 2================================>"){
-					public void run(){
-						newC2Candidates n2 = new newC2Candidates();
-						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
-					}};
-				Thread t34 = new Thread("Thread 3================================>"){
-				public void run(){
-					newC2Candidates n3 = new newC2Candidates();
-					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
-				}};
-				
-				Thread t4 = new Thread("Thread 4================================>"){
-				public void run(){
-					newC2Candidates n4 = new newC2Candidates();
-					n4.initiateComparator(setMap3,writer3,transactionFile,min_support_count);
+					PrintWriter bw2 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet2.txt", "UTF-8");
+					String c = n3.initiateComparator(setMap2,buffer3,min_support_count,transactionDBMap);
+					if(c.length() > 0){
+						bw2.append(c);
+						finalMapRecursiveList.add(c);
+					}
+				}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
 				}
-			};
-			t1234.start();
-			t2234.start();
-			t34.start();
-			t4.start();
-			break;
-
-		
-		case 12345:
-				Thread t12345 = new Thread("Thread 1================================>"){
-				public void run(){
-					newC2Candidates n1 = new newC2Candidates();
-					n1.initiateComparator(setMap,writer,transactionFile,min_support_count);
-				}};
-				
-				Thread t22345 = new Thread("Thread 2================================>"){
-					public void run(){
-						newC2Candidates n2 = new newC2Candidates();
-						n2.initiateComparator(setMap1,writer1,transactionFile,min_support_count);
-					}};
-				Thread t345 = new Thread("Thread 3================================>"){
-				public void run(){
-					newC2Candidates n3 = new newC2Candidates();
-					n3.initiateComparator(setMap2,writer2,transactionFile,min_support_count);
-				}};
-				
-				Thread t45 = new Thread("Thread 4================================>"){
-				public void run(){
-					newC2Candidates n4 = new newC2Candidates();
-					n4.initiateComparator(setMap3,writer3,transactionFile,min_support_count);
+			}};
+			
+			Thread t4 = new Thread("Thread 4================================>"){
+			public void run(){
+				try{
+				newC2Candidates n4 = new newC2Candidates();
+				PrintWriter bw3 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet3.txt", "UTF-8");
+				String d = n4.initiateComparator(setMap3,buffer4,min_support_count,transactionDBMap);
+				if(d.length() > 0){
+					bw3.append(d);
+					finalMapRecursiveList.add(d);
 				}
-			};
+				}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}};
+			
 			Thread t5 = new Thread("Thread 5================================>"){
-				public void run(){
-					newC2Candidates n5= new newC2Candidates();
-					n5.initiateComparator(setMap3,writer4,transactionFile,min_support_count);
-				}};
-				 t12345.start();
-				 t22345.start();
-				 t345.start();
-				 t45.start();
-				 t5.start();
-			break;
+			public void run(){
+				try{
+				newC2Candidates n5= new newC2Candidates();
+				PrintWriter bw4 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet4.txt", "UTF-8");
+				String e = n5.initiateComparator(setMap4,buffer5,min_support_count,transactionDBMap);
+				if(e.length() > 0){
+					bw4.append(e);
+					finalMapRecursiveList.add(e);
+				}}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}};
 			
-		default:
-			System.out.println(" FATAL NONE OF THE SWITCH CASE GOT EXECUTED");
-			break;}
-		}
+			Thread t6 = new Thread("Thread 6================================>"){
+				public void run(){
+					try{
+					newC2Candidates n6 = new newC2Candidates();
+					PrintWriter bw5 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet5.txt", "UTF-8");
+					String f = n6.initiateComparator(setMap5,buffer6,min_support_count,transactionDBMap);
+					if(f.length() > 0){
+						bw5.append(f);
+						finalMapRecursiveList.add(f);
+					}}catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}};
+				
+			Thread t7 = new Thread("Thread 7================================>"){
+				public void run(){
+					try{
+					newC2Candidates n7 = new newC2Candidates();
+					PrintWriter bw6 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet6.txt", "UTF-8");
+					String g = n7.initiateComparator(setMap6,buffer7,min_support_count,transactionDBMap);
+					if(g.length() > 0){
+						bw6.append(g);
+						finalMapRecursiveList.add(g);
+					}
+					}catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}};
+			
+			Thread t8 = new Thread("Thread 8================================>"){
+			public void run(){
+				try{
+				newC2Candidates n8 = new newC2Candidates();
+				PrintWriter bw7 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet7.txt", "UTF-8");
+				String h = n8.initiateComparator(setMap7,buffer8,min_support_count,transactionDBMap);
+				if(h.length() > 0){
+					bw7.append(h);
+					finalMapRecursiveList.add(h);
+				}}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}};
+			
+			Thread t9 = new Thread("Thread 9================================>"){
+			public void run(){
+				try{
+				newC2Candidates n9 = new newC2Candidates();
+				PrintWriter bw8 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet8.txt", "UTF-8");
+				String i = n9.initiateComparator(setMap8,buffer9,min_support_count,transactionDBMap);
+				if(i.length() > 0){
+					bw8.append(i);
+					finalMapRecursiveList.add(i);
+				}}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}};
+			
+			Thread t10 = new Thread("Thread 10================================>"){
+			public void run(){
+				try{
+				newC2Candidates n10= new newC2Candidates();
+				PrintWriter bw9 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet9.txt", "UTF-8");
+				String j = n10.initiateComparator(setMap9,buffer10,min_support_count,transactionDBMap);
+				if(j.length() > 0){
+					bw9.append(j);
+					finalMapRecursiveList.add(j);
+				}}catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+			}};
+			
+			// Concurrent Execution of Threads
+			 t1.start();
+			 t2.start();
+			 t3.start();
+			 t4.start();
+			 t5.start();
+			 t6.start();
+			 t7.start();
+			 t8.start();
+			 t9.start();
+			 t10.start();
+			 
+			 return finalMapRecursiveList;
+	}
 		
 		
 		
-	public synchronized void initiateComparator(Map<Integer,List<Integer>> setsMap,PrintWriter writer,File transactionFile,int min_support_count){
+	public synchronized String initiateComparator(Map<Integer,List<Integer>> setsMap,StringBuffer buffer,int min_support_count,Map<Integer,List<Integer>> transactionDBMap){
 		System.out.println(" Thread Name --------===============================>" + Thread.currentThread().getName());
 		Set<Integer> key = setsMap.keySet();
 		for(int keySet : key){
 			List<Integer> binary = setsMap.get(keySet);
 			int counter = 0;
-			if(binary.isEmpty()){
-				System.out.println(" Critical the Set which is to be compared is empty");
+			if(binary.isEmpty() && transactionDBMap.isEmpty()){
+				System.out.println(" Critical the Sets which are to be compared is empty");
 			}else{
-				
-				try(BufferedReader b = new BufferedReader(new FileReader(transactionFile))) {
-				    for(String line; (line = b.readLine()) != null; ) {
-				    	String transactionDB = line.trim();
-				    	
-				    	if(transactionDB.contains(" ")){
-				    		transactionDB = transactionDB.replaceAll("\\s+",",");
-							String[] transaction = transactionDB.split(",");
-							List<Integer> transactionList = new ArrayList<>();
-							for(String s:transaction){
-								int a = Integer.parseInt(s);
-								transactionList.add(a);
-							}
-							
-							List<Integer> dummytempList = new ArrayList<>();
-							for(int copy: binary){
-								dummytempList.add(copy);
-							}
-							
-							if( !(dummytempList.retainAll(transactionList)) && !(dummytempList.isEmpty())){
-											
-											int dummysize = dummytempList.size();
-											int itemsize = binary.size();
-											
-											if(dummysize == itemsize){
-												counter++;
-											}
-									}
-									}
-								}
-							}catch(Exception e){
-								System.out.println(" Exception ========> " + e.getMessage());
-							}
-				System.out.println(binary.get(0)+","+binary.get(1) + "--------------->" + counter);
-
-				if(counter >=min_support_count){
-					writer.append(binary.get(0)+","+binary.get(1)+ "("+counter+")");
-				}
+				Set<Integer> keys = transactionDBMap.keySet();
+				for(int transacKey : keys){
+					
+					List<Integer> transactionList = transactionDBMap.get(transacKey);
+					List<Integer> dummytempList = new ArrayList<>();
+					for(int copy: binary){
+						dummytempList.add(copy);
 					}
-			
+					
+					if( !(dummytempList.retainAll(transactionList)) && !(dummytempList.isEmpty())){
+									
+									int dummysize = dummytempList.size();
+									int itemsize = binary.size();
+									
+									if(dummysize == itemsize){
+										counter++;
+									}
+							}
+					
+				}
+				//System.out.println(binary.get(0)+","+binary.get(1)+ "("+counter+")");
+				if(counter >=min_support_count){
+					buffer.append(binary.get(0)+","+binary.get(1)+ "("+counter+")");
+					buffer.append("\n");
+				}
+			}
+					}
+		System.out.println(buffer.toString());
+		return buffer.toString();
 	   }
-	}
 	}
