@@ -73,14 +73,15 @@ exceeds minimum_support count. Frequent k+ itemsets refers to all frequent items
 	```
 	
 ### Execution:
-	```
-	$> java CandidateKeys min_sup k input_transaction_file_path output_file_path
-	```
-	input_transaction_file_path - https://github.com/krithivasanchandran/DataMining/blob/master/Amazon_transactionDB.txt
-	output_file_path - Any valid output file directory where the file will be produced.
+	
+```
+$> java CandidateKeys min_sup k input_transaction_file_path output_file_path
+```
+input_transaction_file_path - https://github.com/krithivasanchandran/DataMining/blob/master/Amazon_transactionDB.txt
+output_file_path - Any valid output file directory where the file will be produced.
 	
 ###Sample Output Files:
-	```
-	https://github.com/krithivasanchandran/DataMining/tree/master/Output
-	```
+```
+https://github.com/krithivasanchandran/DataMining/tree/master/Output
+```
 	
