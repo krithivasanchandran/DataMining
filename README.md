@@ -2,22 +2,22 @@
 
 ###DataSet
 
-		Our transaction database is a set of reviewers from Amazon.com. Specifically, reviewer ids are our items. The transaction is a set
-		of reviewer ids. Specifically, all reviewer ids which were used to post a review on that product. The format of the transaction
-		database follows the standard format seen in class. Each line represents a transaction. For a given transaction, the items (reviewer	ids) are separated by a space character. 
+Our transaction database is a set of reviewers from Amazon.com. Specifically, reviewer ids are our items. The transaction is a set
+of reviewer ids. Specifically, all reviewer ids which were used to post a review on that product. The format of the transaction
+database follows the standard format seen in class. Each line represents a transaction. For a given transaction, the items (reviewer	ids) are separated by a space character. 
 
 ###Data Pre-Processing
 	
-		For pattern mining, one usually requires frequent itemset candidate generation and that is done based on the total
-		ordering of elements of previous lower order frequent itemsets . Since comparing strings is more expensive than integers, you will be at an advantage if you map all unique reviewer ids to intergers and
-		convert the transaction database above to set of transaction with integers as items.
+	For pattern mining, one usually requires frequent itemset candidate generation and that is done based on the total
+	ordering of elements of previous lower order frequent itemsets . Since comparing strings is more expensive than integers, you will be at an advantage if you map all unique reviewer ids to intergers and
+	convert the transaction database above to set of transaction with integers as items.
 	
 ###Implementation
 
-		Mining frequent k+ items sets whose value is greater than minimum support count(minimum_support). . A frequent k+ itemset refer to an itemset
-		whose size is k (i.e., it has k elements) and the support of that itemset (no. of times that itemset appears in the transaction database)
-		exceeds minimum_support count. Frequent k+ itemsets refers to all frequent itemsets (i.e., itemsets appearing more than min_supp times in the
-		data) which have sizes greater than k.  
+	Mining frequent k+ items sets whose value is greater than minimum support count(minimum_support). . A frequent k+ itemset refer to an itemset
+	whose size is k (i.e., it has k elements) and the support of that itemset (no. of times that itemset appears in the transaction database)
+	exceeds minimum_support count. Frequent k+ itemsets refers to all frequent itemsets (i.e., itemsets appearing more than min_supp times in the
+	data) which have sizes greater than k.  
 
 ### Examples
   1. min_sup=4, k= 3
