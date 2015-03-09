@@ -8,26 +8,25 @@ database follows the standard format seen in class. Each line represents a trans
 
 ###Data Pre-Processing
 	
-	For pattern mining, one usually requires frequent itemset candidate generation and that is done based on the total
-	ordering of elements of previous lower order frequent itemsets . Since comparing strings is more expensive than integers, you will be at an advantage if you map all unique reviewer ids to intergers and
-	convert the transaction database above to set of transaction with integers as items.
+For pattern mining, one usually requires frequent itemset candidate generation and that is done based on the total
+ordering of elements of previous lower order frequent itemsets . Since comparing strings is more expensive than integers, you will be at an advantage if you map all unique reviewer ids to intergers and
+convert the transaction database above to set of transaction with integers as items.
 	
 ###Implementation
 
-	Mining frequent k+ items sets whose value is greater than minimum support count(minimum_support). . A frequent k+ itemset refer to an itemset
-	whose size is k (i.e., it has k elements) and the support of that itemset (no. of times that itemset appears in the transaction database)
-	exceeds minimum_support count. Frequent k+ itemsets refers to all frequent itemsets (i.e., itemsets appearing more than min_supp times in the
-	data) which have sizes greater than k.  
+Mining frequent k+ items sets whose value is greater than minimum support count(minimum_support). . A frequent k+ itemset refer to an itemset
+whose size is k (i.e., it has k elements) and the support of that itemset (no. of times that itemset appears in the transaction database)
+exceeds minimum_support count. Frequent k+ itemsets refers to all frequent itemsets (i.e., itemsets appearing more than min_supp times in the data) which have sizes greater than k.  
 
 ### Examples
-  1. min_sup=4, k= 3
+1. min_sup=4, k= 3
 	```
 		A37787I8C184FW AWE8HU0AZKASV A3UIATN5XW74NQ (4)
 		A3Y9BX5AS769T AWE8HU0AZKASV A3UIATN5XW74NQ (5)
 		AZ7I5GAJZA3JO A28R83ADQPMF2X A2GKW94L6HRND7 A2IE7YPWUYZAXS (4)
   ```
   
-  2. min_sup=5, k= 3
+2. min_sup=5, k= 3
   ```
 		A9TJYY7P2R280 A2S9IDC1IZH7WN AYFQ8ML2PYZ1D (5)
 		A3PXX92YUMGMBG A3UIATN5XW74NQ AWE8HU0AZKASV (5)
@@ -35,7 +34,7 @@ database follows the standard format seen in class. Each line represents a trans
 		A3Y9BX5AS769T A3UIATN5XW74NQ AWE8HU0AZKASV (5)
 	```
 	
-	3. min_sup=8, k =2
+3. min_sup=8, k =2
 	```
 		A20JYIHL1W1U54 A7Y6AVS576M03 (10)
 		AO2V6YDDYQ2CR A5JLAU2ARJ0BO (8)
@@ -43,7 +42,7 @@ database follows the standard format seen in class. Each line represents a trans
 		A231WM2Z2JL0U3 A5JLAU2ARJ0BO (11)
 	```
 	
-	4. min_sup=7, k =2
+4. min_sup=7, k =2
 	```
 		A20JYIHL1W1U54 A7Y6AVS576M03 (10)
 		AO2V6YDDYQ2CR A5JLAU2ARJ0BO (8)
@@ -54,14 +53,13 @@ database follows the standard format seen in class. Each line represents a trans
 		A3PPXFIVMJ9MV8 AUPUZ14778SD7 (7)
 		A231WM2Z2JL0U3 A5JLAU2ARJ0BO (11)
 	```
-	
-	5. min_sup=10, k =2
+5. min_sup=10, k =2
 	```
 		A20JYIHL1W1U54 A7Y6AVS576M03 (10)
 		A231WM2Z2JL0U3 A5JLAU2ARJ0BO (11)
 	```
 	
-	6. min_sup=75, k=1
+6. min_sup=75, k=1
 	```
 		A2A10ZSC2RH4RG (629)
 		A25HBO5V8S8SEA (159)
@@ -74,14 +72,14 @@ database follows the standard format seen in class. Each line represents a trans
 		A5JLAU2ARJ0BO (323)
 	```
 	
-	### Execution:
+### Execution:
 	```
 	$> java CandidateKeys min_sup k input_transaction_file_path output_file_path
 	```
 	input_transaction_file_path - https://github.com/krithivasanchandran/DataMining/blob/master/Amazon_transactionDB.txt
 	output_file_path - Any valid output file directory where the file will be produced.
 	
-	###Sample Output Files:
+###Sample Output Files:
 	```
 	https://github.com/krithivasanchandran/DataMining/tree/master/Output
 	```
