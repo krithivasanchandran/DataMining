@@ -1,120 +1,253 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-
 public class CandidateKeys {
 
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+	public static void main(String[] args) throws IOException,
+			InterruptedException {
 
-		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets1.txt");
-		PrintWriter writer = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt", "UTF-8");
-		PrintWriter ItemWriter = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/finalitems.txt", "UTF-8");
-		Scanner scan = new Scanner(file);
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Enter the number of sets to be formed");
-		int k =0;
-		String[] oneSetReducerKeys = null; 
-		int minimumSupportCount = 0;
-		List<String> binaryItems = new ArrayList<>();
-		StringBuffer buffer = new StringBuffer();
-		int i=0;
-		Map<String,Integer> F1 = new HashMap<String,Integer>();
-		
-		reboot:
-		while(scanner.hasNext()){
-			k = scanner.nextInt();
-			if(k<2){
-				System.out.println("Please enter a valid set number");
-				continue reboot;
-			}
-			System.out.println("Please enter the minimum support count");
-			minimumSupportCount = scanner.nextInt();
-			break;
+		String InputFilePath = args[2].trim();
+		String OutputFilePath = args[3].trim();
+
+		File file = new File(OutputFilePath + "/CandidateItemSets.txt");
+		File frequentFile = new File(OutputFilePath + "/UniqueItemSet.txt");
+		File transactionFile = new File(OutputFilePath
+				+ "/binaryTransactionDB.txt");
+
+		if (!transactionFile.exists() || !frequentFile.exists()) {
+			UniqueItemSetGeneration generateUniquItemSet = new UniqueItemSetGeneration();
+			generateUniquItemSet.generateUniqueSet(OutputFilePath,
+					InputFilePath);
 		}
-		scanner.close();
-		System.out.println(k + " ---> " + minimumSupportCount);
-		
-		while(scan.hasNext()){
+
+		if (!file.exists()) {
+			FrequentItemSet freqItemSet = new FrequentItemSet();
+			freqItemSet.frequentSetGenerator(OutputFilePath);
+		}
+
+		Scanner keyValue = new Scanner(frequentFile);
+		Scanner scan = new Scanner(file);
+		System.out.println("Enter the number of sets to be formed");
+		int k = 0;
+		int minimumSupportCount = 0;
+		Map<String, Integer> F1 = new HashMap<String, Integer>();
+		Map<String, String> uniqueItemKeyValue = new HashMap<>();
+		Map<Integer, List<Integer>> transactionDBMap = new HashMap<>();
+		StringBuffer buffer = new StringBuffer();
+		boolean check = false;
+
+		k = Integer.parseInt(args[1]);
+		if (k < 0) {
+			System.out
+					.println("Please enter positive k value . System has Exited . Please reeexecute the program");
+			System.exit(0);
+		}
+		minimumSupportCount = Integer.parseInt(args[0]);
+		if (minimumSupportCount < 0) {
+			System.out
+					.println("Please enter positive minimum support count value . System has Exited . Please reeexecute the program");
+			System.exit(0);
+		}
+
+		System.out.println("The value of k is " + k
+				+ " --->  Minimum Support Count = " + minimumSupportCount);
+
+		while (keyValue.hasNext()) {
+			String str = keyValue.nextLine().trim();
+			int getDelimeterIndex = str.indexOf("=");
+			String ke = str.substring(0, getDelimeterIndex).trim();
+			String val = str.substring(getDelimeterIndex + 1, str.length())
+					.trim();
+			uniqueItemKeyValue.put(ke, val);
+		}
+		keyValue.close();
+
+		BufferedReader b = null;
+		try {
+			b = new BufferedReader(new FileReader(transactionFile));
+			int mapCounter = 0;
+			for (String line; (line = b.readLine()) != null;) {
+				String transactionDB = line.trim();
+				if (transactionDB.contains(" ")) {
+					transactionDB = transactionDB.replaceAll("\\s+", ",");
+					String[] transaction = transactionDB.split(",");
+					List<Integer> transactionList = new ArrayList<>();
+					int selector = 0;
+					for (String s : transaction) {
+						int a = Integer.parseInt(s.trim());
+						transactionList.add(a);
+						selector = selector + 1;
+					}
+					if (selector >= k) {
+						transactionDBMap.put(mapCounter, transactionList);
+						mapCounter++;
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(" Exception ========> " + e.getMessage());
+		} finally {
+			try {
+				if (b != null) {
+					b.close();
+				} else {
+					System.out.println(" Buffer has not been initialized ");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		while (scan.hasNext()) {
 
 			String getString = scan.nextLine().trim();
-	        int getDelimeterIndex = getString.indexOf(":");
-		        if(getDelimeterIndex != -1){
-			        String uniqueItemString = getString.substring(0, getDelimeterIndex);
-			        int count = Integer.parseInt(getString.substring(getDelimeterIndex+1, getString.length()).trim());
-			        if(count >= minimumSupportCount){
-			        	F1.put(uniqueItemString, count);
-			        }
-			       }
-	        //binaryItems.add(uniqueItemString);
+			int getDelimeterIndex = getString.indexOf(":");
+			if (getDelimeterIndex != -1) {
+				String uniqueItemString = getString.substring(0,
+						getDelimeterIndex).trim();
+				int count = Integer.parseInt(getString.substring(
+						getDelimeterIndex + 1, getString.length()).trim());
+				if (count >= minimumSupportCount) {
+					if (uniqueItemKeyValue.containsKey(uniqueItemString)) {
+						String sg = uniqueItemKeyValue.get(uniqueItemString);
+						buffer.append(sg + " " + " ( " + count + " ) ");
+						buffer.append("\n");
+					}
+					F1.put(uniqueItemString, count);
+				}
+			}
 		}
-		scan.close();
 
 		Set<String> keys = F1.keySet();
-		System.out.println(keys + "\n");
 		String[] items = keys.toArray(new String[keys.size()]);
-		
-		// Creating a set of two {a,b} 
-		if(k>1){
 
-			int m=0;
-			int setCounter = 0;
-			oneSetReducerKeys = new String[items.length];
-			while(m<items.length){
-				
-				String set = items[m];
-				oneSetReducerKeys[setCounter] = set;
-				
-				for(int p=m+1;p<items.length; p++){
+		if (items.length > 100) {
+			int setLen = items.length / 15;
 
-					String temp = items[p];
-					writer.append(temp);
-					writer.append(",");
-					writer.append(set);
-					writer.append("\n");
-				  }
-				writer.flush();
-				m++;
-				setCounter++;
-			}
-		}
-		C2CandidateSet c2 = new C2CandidateSet();
-		StringBuffer finalBuffer = c2.generateCandidateSet(2,oneSetReducerKeys);
-		ItemWriter.append(finalBuffer.toString());
-		int counter = 0;
-		
-		String recursiveValidator = finalBuffer.toString();
-		for(;recursiveValidator.indexOf("--")!=-1;){
-			int delemiter = recursiveValidator.indexOf("--");
-			String parentString = recursiveValidator.substring(0, delemiter).trim();
-			String superString = recursiveValidator.substring(delemiter+2, recursiveValidator.length());
-			
-			for(;superString.indexOf("--") != -1;){
-				int subdelimeter = superString.indexOf("--");
-				String subString = superString.substring(0, subdelimeter);
-				
-				if(parentString.regionMatches(0, subString, 0, subdelimeter)){
-					System.out.println(recursiveValidator.substring(0, subdelimeter) + "(" + counter + ")");
-					counter = counter + 1;
+			List<String> s1 = new ArrayList<>();
+			List<String> s2 = new ArrayList<>();
+			List<String> s3 = new ArrayList<>();
+			List<String> s4 = new ArrayList<>();
+			List<String> s5 = new ArrayList<>();
+			List<String> s6 = new ArrayList<>();
+			List<String> s7 = new ArrayList<>();
+			List<String> s8 = new ArrayList<>();
+			List<String> s9 = new ArrayList<>();
+			List<String> s10 = new ArrayList<>();
+			List<String> s11 = new ArrayList<>();
+			List<String> s12 = new ArrayList<>();
+			List<String> s13 = new ArrayList<>();
+			List<String> s14 = new ArrayList<>();
+			List<String> s15 = new ArrayList<>();
+
+			int counter = 0;
+			for (String s : items) {
+				if (counter < setLen) {
+					s1.add(s);
+				} else if (counter > setLen && counter < setLen * 2) {
+					s2.add(s);
+				} else if (counter > (setLen * 2) && counter < (setLen * 3)) {
+					s3.add(s);
+				} else if (counter > (setLen * 3) && counter < (setLen * 4)) {
+					s4.add(s);
+				} else if (counter > (setLen * 4) && counter < (setLen * 5)) {
+					s5.add(s);
+				} else if (counter > (setLen * 5) && counter < (setLen * 6)) {
+					s6.add(s);
+				} else if (counter > (setLen * 6) && counter < (setLen * 7)) {
+					s7.add(s);
+				} else if (counter > (setLen * 7) && counter < (setLen * 8)) {
+					s8.add(s);
+				} else if (counter > (setLen * 8) && counter < (setLen * 9)) {
+					s9.add(s);
+				} else if (counter > (setLen * 9) && counter < (setLen * 10)) {
+					s10.add(s);
+				} else if (counter > (setLen * 10) && counter < (setLen * 11)) {
+					s11.add(s);
+				} else if (counter > (setLen * 11) && counter < (setLen * 12)) {
+					s12.add(s);
+				} else if (counter > (setLen * 12) && counter < (setLen * 13)) {
+					s13.add(s);
+				} else if (counter > (setLen * 13) && counter < (setLen * 14)) {
+					s14.add(s);
+				} else {
+					s15.add(s);
 				}
-				superString = superString.substring(subdelimeter+2, superString.length());
+				counter = counter + 1;
 			}
-			recursiveValidator = recursiveValidator.substring(delemiter+2, recursiveValidator.length());
+
+			syndicate aa1 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s1, transactionDBMap);
+			aa1.start1();
+
+			syndicate aa2 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s2, transactionDBMap);
+			aa2.start2();
+
+			syndicate aa3 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s3, transactionDBMap);
+			aa3.start3();
+
+			syndicate aa4 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s4, transactionDBMap);
+			aa4.start4();
+
+			syndicate aa5 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s5, transactionDBMap);
+			aa5.start5();
+
+			syndicate aa6 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s6, transactionDBMap);
+			aa6.start6();
+
+			syndicate aa7 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s7, transactionDBMap);
+			aa7.start7();
+
+			syndicate aa8 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s8, transactionDBMap);
+			aa8.start8();
+
+			syndicate aa9 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s9, transactionDBMap);
+			aa9.start9();
+
+			syndicate aa10 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s10, transactionDBMap);
+			aa10.start10();
+
+			syndicate aa11 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s11, transactionDBMap);
+			aa11.start11();
+
+			syndicate aa12 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s12, transactionDBMap);
+			aa12.start12();
+
+			syndicate aa13 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s13, transactionDBMap);
+			aa13.start13();
+
+			syndicate aa14 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s14, transactionDBMap);
+			aa14.start14();
+
+			syndicate aa15 = new syndicate(OutputFilePath, minimumSupportCount,
+					buffer, check, uniqueItemKeyValue, k, s15, transactionDBMap);
+			aa15.start15();
 		}
-		
-		
-		
-
-		
 	}
-
 }

@@ -1,193 +1,86 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.StringTokenizer;
 
+public class C2Candidates {
 
-public class C2CandidateSet {
-	
-     public StringBuffer generateCandidateSet(int setSize,String[] oneStepSetReducer) throws FileNotFoundException, UnsupportedEncodingException{
-	
-	
-		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt");
-		File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
-		Scanner candidateScan = new Scanner(file);
-		Scanner transactionScan = new Scanner(transactionFile);
-		StringBuffer buffer = new StringBuffer();
-		StringBuffer finalitems = new StringBuffer();
-		StringBuffer transactionBuffer = new StringBuffer();
-		StringBuffer reducedTransactionBuffer = new StringBuffer();
-		StringBuffer valueSetReducer = new StringBuffer();
-		List<Integer> itemSet = new ArrayList<>();
-		int i = 0;
-		transactionScan.useDelimiter(System.getProperty("line.separator")); 
-		Map<String,StringBuffer> setReducer = new HashMap<>();
-
-		// Reading the value from Candidate Scan 2
+	public synchronized void generateCandidateSet(final int min_support_count,List<String> candidateKeysSet,Map<Integer,List<Integer>> transactionDBMap,String OutputFilePath) throws IOException, InterruptedException {
 		
-		while(candidateScan.hasNext()){
-			
-			String str = candidateScan.nextLine();
-			buffer.append(str);
-	//		 line separator
-			buffer.append("||");
-		}
-		candidateScan.close();
-		
-		while(transactionScan.hasNext()){
-			
-			String papaya = transactionScan.nextLine().trim();
-			
-			if(papaya.contains(" ")){
-				papaya = papaya.replaceAll("\\s+",",");
-				transactionBuffer.append(papaya);
-				transactionBuffer.append("_");
+				List<String> binaryString = candidateKeysSet;
+				
+		        
+		        List<Integer> binaryList = new ArrayList<>();
+				for(String b: binaryString){
+					int c = Integer.parseInt(b);
+					binaryList.add(c);
 				}
-		}
-		transactionScan.close();
-		
-		//Filter the transactionDB based on k value to reduce seek time
-		String initializer = transactionBuffer.toString();
-		
-		transactionBuffer.delete(0, transactionBuffer.length());
-		
-		for(;initializer.indexOf("_")!=-1;){
-
-			int delimeter = initializer.indexOf("_");
-			boolean check = false;
-			String finale = initializer.substring(0, delimeter).trim();
-			int countdown =0;
-			String[] stringArray = finale.split(",");
-			for(String t:stringArray){
-				countdown = countdown+1;
-			}
-			if(countdown >= setSize){
-				reducedTransactionBuffer.append(finale);
-				reducedTransactionBuffer.append("_");
-				check = true;
-			}
-			if(check){
-				reducedTransactionBuffer.append("\n");
-			}
-			initializer = initializer.substring(delimeter+1, initializer.length());
-		}
-		
-		String one = reducedTransactionBuffer.toString().trim();
-		String[] strCmp = one.split("_");
-		
-		for(String finals:strCmp ){
-			if(oneStepSetReducer!=null){
-				for(int q=0;q<oneStepSetReducer.length;q++){
-					String stepStr = oneStepSetReducer[q].trim();
-					if(finals.contains(stepStr.trim())){
-						valueSetReducer.append(finals);
-						valueSetReducer.append("_");
-						setReducer.put(stepStr, valueSetReducer);
+				
+				try(PrintWriter k1writer = new PrintWriter(new BufferedWriter(new FileWriter(OutputFilePath+"/FrequentRecursiveSet.txt", true)))){
+					
+					C2Candidates n1 = new C2Candidates();
+					StringBuffer buffer = new StringBuffer();
+					
+					String a = n1.initiateComparator(binaryList,min_support_count,transactionDBMap,buffer);
+					//System.out.println(a);
+							if(a.length() > 0 && a != null){
+								k1writer.append(a);
+							}
+							k1writer.flush();
+							k1writer.close();
+					}catch(IOException ioe)
+					{
+					    System.err.println("IOException: " + ioe.getMessage());
 					}
 				}
+
+	public synchronized String initiateComparator(List<Integer> candidateKeysSet2,int min_support_count,Map<Integer, List<Integer>> transactionDBMap,
+			StringBuffer buff) {
+
+		int counter = 0;
+		
+		if (candidateKeysSet2.isEmpty() && transactionDBMap.isEmpty()) {
+			System.out
+					.println(" Critical the Sets which are to be compared is empty");
+		} else {
+			Set<Integer> keys = transactionDBMap.keySet();
+			for (int transacKey : keys) {
+
+				List<Integer> transactionList = transactionDBMap
+						.get(transacKey);
+				List<Integer> dummytempList = new ArrayList<>();
+				for (int copy : candidateKeysSet2) {
+					dummytempList.add(copy);
+				}
+
+				if (!(dummytempList.retainAll(transactionList))
+						&& !(dummytempList.isEmpty())) {
+
+					int dummysize = dummytempList.size();
+					int itemsize = candidateKeysSet2.size();
+
+					if (dummysize == itemsize) {
+						counter++;
+					}
+				}
+
+			}
+
+			if (counter >= min_support_count) {
+				for (int i = 0; i < candidateKeysSet2.size(); i++) {
+					int c = candidateKeysSet2.get(i);
+					buff.append(c + "");
+					if (i < (candidateKeysSet2.size() - 1)) {
+						buff.append(",");
+					}
+				}
+				buff.append("(" + counter + ")");
 			}
 		}
-		
-		// Compares the UniqueItemSet for k=2 with TransactionDB.
-		
-					String s = buffer.toString();
-		             buffer.delete(0, buffer.length());
-					for(;s.indexOf("||") != -1;){
-						System.out.println("At the start of for ---------------------------->");
-						int delimeterindex = s.indexOf("||");
-						String persistent=null;
-						String split = s.substring(0, delimeterindex).trim();
-						StringTokenizer tokenizer = new StringTokenizer(split,",");
-						while(tokenizer.hasMoreTokens()){
-							String elements = tokenizer.nextToken().trim();
-							if(persistent == null){
-								persistent = elements.trim();
-							}else{
-								persistent = persistent.concat(",").trim();
-								persistent = persistent.concat(elements).trim();
-							}
-						}
-				
-						System.out.println( " Set Values =====================> " + persistent);	
-//						 Else Part of this If statement is not required as we are comparing with more than pair {a,b}
-						
-							itemSet.clear();
-							StringBuffer reducedBuffer = null;
-
-							StringTokenizer persistenTokens = new StringTokenizer(persistent,",");
-								String strCarrier =null;
-								
-								while(persistenTokens.hasMoreTokens()){
-									String p = persistenTokens.nextToken().trim();
-									if(strCarrier == null){
-										strCarrier = p.trim();
-									}else{
-										strCarrier = strCarrier.concat(",").trim();
-										strCarrier = strCarrier.concat(p).trim();
-									}
-									int temp = Integer.valueOf(p,2);
-									itemSet.add(temp);
-								}
-								
-								String[] cutStr = strCarrier.split(",");
-								for(String sc:cutStr){
-									Set<String> reducedKeySet = setReducer.keySet();
-									for(String reducer : reducedKeySet){
-										if(sc.equalsIgnoreCase(reducer)){
-											reducedBuffer = new StringBuffer();
-											reducedBuffer = setReducer.get(reducer);
-										}
-									}
-								}
- 								
-								List<Integer> tempList= new ArrayList<>();
-									if(reducedBuffer != null){
-										String bbufferr = reducedBuffer.toString();
-										for(;bbufferr.indexOf("_")!=-1;){
-											int bbufferDelimeterIndex = bbufferr.indexOf("_");
-											String temps = bbufferr.substring(0, bbufferDelimeterIndex).trim();
-											String[] splitter = temps.split(",");
-											for(String yel:splitter){
-												int temp = Integer.valueOf(yel,2);
-												tempList.add(temp);
-											}
-											bbufferr = bbufferr.substring(bbufferDelimeterIndex+1, bbufferr.length());
-										}
-									}
-									
-							List<Integer> dummytempList = new ArrayList<>();
-							for(int copy: itemSet){
-								dummytempList.add(copy);
-							}
-							
-							if( !(dummytempList.retainAll(tempList)) && !(dummytempList.isEmpty())){
-								
-									int dummysize = dummytempList.size();
-									int itemsize = itemSet.size();
-									
-									if(dummysize == itemsize){
-										
-										for(int appenders : tempList){
-											finalitems.append(appenders);
-											finalitems.append(",");
-										}
-										finalitems.delete(finalitems.length()-1,finalitems.length());
-										finalitems.append("--");
-										finalitems.append("\n");
-									}
-							}
-							
-						//if((delimeterindex+2) < s.length()){
-						 s = s.substring(delimeterindex+2, s.length());
-						//}
- 					}
-					return finalitems;
+		return buff.toString();
 	}
-     
 }
