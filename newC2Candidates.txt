@@ -18,8 +18,8 @@ public class newC2Candidates extends Thread {
 
 	public  List<String> generateCandidateSet(final int min_support_count,int totalFileSize) throws IOException, InterruptedException {
 		
-		File file = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/CandidateItemSets2.txt");
-	    File transactionFile = new File("C:/Users/KRITHIVASAN CHANDRAN/Desktop/proj_1/binaryTransactionDB.txt");
+		File file = new File("C:/Users/Username/Desktop/proj_1/CandidateItemSets2.txt");
+	    File transactionFile = new File("C:/Users/Username/Desktop/proj_1/binaryTransactionDB.txt");
 		final List<String> finalMapRecursiveList = new ArrayList<>();
 		List<String> finalMapRecursiveListduplicateList = new ArrayList<>();
 			
@@ -115,7 +115,7 @@ public class newC2Candidates extends Thread {
 					
 					try {
 						newC2Candidates n1 = new newC2Candidates();
-						PrintWriter bw = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet.txt", "UTF-8");
+						PrintWriter bw = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet.txt", "UTF-8");
 						String a = n1.initiateComparator(setMap,buffer1,min_support_count,transactionDBMap);
 						if(a.length() > 0){
 							bw.append(a);
@@ -134,7 +134,7 @@ public class newC2Candidates extends Thread {
 				public void run(){
 					try{
 					newC2Candidates n2 = new newC2Candidates();
-					PrintWriter bw1 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet1.txt", "UTF-8");
+					PrintWriter bw1 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet1.txt", "UTF-8");
 					String b = n2.initiateComparator(setMap1,buffer2,min_support_count,transactionDBMap);
 					if(b.length() > 0){
 						bw1.append(b);
@@ -151,7 +151,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 					newC2Candidates n3 = new newC2Candidates();
-					PrintWriter bw2 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet2.txt", "UTF-8");
+					PrintWriter bw2 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet2.txt", "UTF-8");
 					String c = n3.initiateComparator(setMap2,buffer3,min_support_count,transactionDBMap);
 					if(c.length() > 0){
 						bw2.append(c);
@@ -168,7 +168,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 				newC2Candidates n4 = new newC2Candidates();
-				PrintWriter bw3 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet3.txt", "UTF-8");
+				PrintWriter bw3 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet3.txt", "UTF-8");
 				String d = n4.initiateComparator(setMap3,buffer4,min_support_count,transactionDBMap);
 				if(d.length() > 0){
 					bw3.append(d);
@@ -185,7 +185,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 				newC2Candidates n5= new newC2Candidates();
-				PrintWriter bw4 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet4.txt", "UTF-8");
+				PrintWriter bw4 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet4.txt", "UTF-8");
 				String e = n5.initiateComparator(setMap4,buffer5,min_support_count,transactionDBMap);
 				if(e.length() > 0){
 					bw4.append(e);
@@ -201,7 +201,7 @@ public class newC2Candidates extends Thread {
 				public void run(){
 					try{
 					newC2Candidates n6 = new newC2Candidates();
-					PrintWriter bw5 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet5.txt", "UTF-8");
+					PrintWriter bw5 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet5.txt", "UTF-8");
 					String f = n6.initiateComparator(setMap5,buffer6,min_support_count,transactionDBMap);
 					if(f.length() > 0){
 						bw5.append(f);
@@ -217,7 +217,7 @@ public class newC2Candidates extends Thread {
 				public void run(){
 					try{
 					newC2Candidates n7 = new newC2Candidates();
-					PrintWriter bw6 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet6.txt", "UTF-8");
+					PrintWriter bw6 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet6.txt", "UTF-8");
 					String g = n7.initiateComparator(setMap6,buffer7,min_support_count,transactionDBMap);
 					if(g.length() > 0){
 						bw6.append(g);
@@ -234,7 +234,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 				newC2Candidates n8 = new newC2Candidates();
-				PrintWriter bw7 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet7.txt", "UTF-8");
+				PrintWriter bw7 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet7.txt", "UTF-8");
 				String h = n8.initiateComparator(setMap7,buffer8,min_support_count,transactionDBMap);
 				if(h.length() > 0){
 					bw7.append(h);
@@ -250,7 +250,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 				newC2Candidates n9 = new newC2Candidates();
-				PrintWriter bw8 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet8.txt", "UTF-8");
+				PrintWriter bw8 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet8.txt", "UTF-8");
 				String i = n9.initiateComparator(setMap8,buffer9,min_support_count,transactionDBMap);
 				if(i.length() > 0){
 					bw8.append(i);
@@ -266,7 +266,7 @@ public class newC2Candidates extends Thread {
 			public void run(){
 				try{
 				newC2Candidates n10= new newC2Candidates();
-				PrintWriter bw9 = new PrintWriter("C:/Users/KRITHIVASAN CHANDRAN/Desktop/FrequentRecursiveSet9.txt", "UTF-8");
+				PrintWriter bw9 = new PrintWriter("C:/Users/username/Desktop/FrequentRecursiveSet9.txt", "UTF-8");
 				String j = n10.initiateComparator(setMap9,buffer10,min_support_count,transactionDBMap);
 				if(j.length() > 0){
 					bw9.append(j);
